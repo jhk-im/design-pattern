@@ -329,3 +329,47 @@ Squeak --> QuackBehavior
 MuteQuack --> QuackBehavior
 ```
 
+### `오리의 행동 통합하기`
+
+>핵심은 행동을 Duck 클래스 혹은 서브 클래스에서 정의한 메소드를 써서 구현하지 않고 다른 클래스에 위임한다는 것이다.
+
+```mermaid
+classDiagram
+
+class Duck {
+    FlyBehavior flyBehavior
+    QuackBehavior quakBehavior
+    
+    performQuack()
+    performFly()
+    swim()
+    display()
+}
+```
+
+```java
+// performQuack 구현 예시
+public abstract class Duck {
+    // QuackBehavior 인터페이스 구현 레퍼런스
+    QuackBehavior quackBehavior;
+
+    public void performQuack() {
+        // 행동을 직접 구현하는 대신, quackBehavior 참조 객체에 행동 위임
+        quackBehavior.quack();
+    }
+}
+```
+
+```java
+// MallardDuck 구현 예시
+public class MallarDuck extends Duck {
+    
+    // Duck 클래스로 부터 quackBehavior, flyBehavior을 상속받음
+    public MallarDuck() {
+        // performQuack() 호출시 행동을 Quack 객체에 위임
+        quackBehavior = new Quack();
+        // performFly() 호출시 행동을 FlyWithWings 객체에 위임
+        flyBehavior = new FlyWithWings();
+    }
+}
+```
