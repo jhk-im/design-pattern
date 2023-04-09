@@ -363,7 +363,7 @@ public abstract class Duck {
 ```java
 // MallardDuck 구현 예시
 public class MallarDuck extends Duck {
-    
+
     // Duck 클래스로 부터 quackBehavior, flyBehavior을 상속받음
     public MallarDuck() {
         // performQuack() 호출시 행동을 Quack 객체에 위임
@@ -372,4 +372,101 @@ public class MallarDuck extends Duck {
         flyBehavior = new FlyWithWings();
     }
 }
+```
+
+### `동적으로 행동 지정하기`
+
+```java
+* 오리의 행동 형식을 Duck 서브클래스 setter 메서드로 호출
+
+// Duck.java
+public void setFlyBehavior(FlyBehavior fb) {
+    flyBehavior = fb;
+}
+
+public void setQuackBehavior(QauckBehavior qb) {
+    quackBehavior = qb;
+}
+
+// ModelDuck.java 생성
+public class ModelDuck extends  Duck{
+    public ModelDuck() {
+        flyBehavior = new FlyNoWay();
+        quackBehavior = new Quack();
+    }
+
+    @Override
+    public void display() {
+        System.out.println("모형오리");
+    }
+}
+
+// FlyRocketPowered.java 생성
+public class FlyRocketPowered implements FlyBehavior{
+    @Override
+    public void fly() {
+        System.out.println("로켓 추진으로 날고 있음");
+    }
+}
+
+// main.java
+Duck model = new ModelDuck();
+model.performFly(); // 날 수 없음
+model.setFlyBehavior(new FlyRocketPowered()); // 로켓 장착
+model.performFly(); // 로켓 추진으로 날고 있음
+```
+
+### `캡슐화된 행동 살펴보기`
+
+```mermaid
+classDiagram
+
+class Duck {
+    FlyBehavior flyBehavior //캡슐화
+    QuackBehavior quackBehavior //캡슐화
+    swim()
+    display()
+    performQuack()
+    performFly()
+    setFlyBehavior()
+    setQuckBehavior()
+}
+
+class MallardDuck {
+    display()
+}
+
+class FlyBehavior {
+    fly()
+}
+<<interface>> FlyBehavior
+
+class FlyWithWings {
+    fly()
+}
+
+MallardDuck --> Duck : MallardDuck은 Duck이다.
+Duck --> FlyBehavior : Duck에는 FlyBehavior이 있다.
+FlyWithWings --> FlyBehavior : FlyWithWings는 FlyBehavior을 구현한다.
+```
+
+### `두 클래스를 합치는 방법`
+
+Duck에는 FlyBehavior이 있으며 행동을 위임 받는다. 이런 식으로 두 클래스를 합치는 것을 `구성(composition)`을 활용한다고 부른다.
+
+```txt
+디자인 원칙 3
+상속보다는 구성을 활용한다.
+```
+
+> 구성을 활용하여 시스템을 만들면 유연성을 향상시킬 수 있다. 알고리즘 군을 별도의 클래스 집합으로 캡슐화 할 수 있으며 올바른 인터페이스를 구현하여 실행 시 행동을 바꿀 수도 있다. 구성은 여러 디자인 패턴에서 사용된다.
+
+### `전략패턴(Strategy Pattern)`
+
+이 장의 예제 문제에서 전략패턴을 사용하였다.
+
+```txt
+전략패턴(Strategy Pattern)
+* 알고리즘군을 정의하고 캡슐화하여 각각의 알고리즘 군을 수정하여 사용
+* 클라이언트로 부터 알고리즘을 분리하여 독립적으로 변경
 ```
