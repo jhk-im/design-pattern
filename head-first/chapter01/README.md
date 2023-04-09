@@ -233,3 +233,99 @@ FlyNoWay --> FlyBehavior
 ```
 
 > 각 행동은 인터페이스로 표현하고 인터페이스를 사용하여 행동을 구현한다. 이제 fly()와 quack()은 Duck 클래스에서 구현하지 않는다. 이렇게 되면 Duck 서브 클래스는 인터페이스로 표현되는 행동을 사용하게 된다. 따라서 실제 행동 구현은 Duck 서브 클래스에 국한되지 않는다.
+
+#### `상위 형식에 맞춰서 프로그래밍`
+
+지금의 해결 방법에서 인터페이스라는 단어는 중의적 표현이다. 인터페이스란 자바의 구조를 지칭하기도 하며 인터페이스라는 개념을 지칭하는 용도로도 사용된다. 그렇기 때문에 반드시 자바 인터페이스를 사용하라는 뜻이 아니다. 핵심은 `실제 실행 시 쓰이는 객체가 코드에 고정되지 않도록 supertype에 맞춰 프로그래밍하여 다형성을 활용해야 한다는 점`이다.
+
+```mermaid
+classDiagram
+
+class Animal {
+    makeSound()
+}
+<<interface>> Animal
+
+class Dog {
+    markeSound() : bark()
+    bark() //짖음
+}
+
+class Cat {
+    markeSound() : meow()
+    meow() //야옹
+}
+
+Dog --> Animal
+Cat --> Animal
+```
+
+```java
+* 변수 선언시 추상 클래스 혹은 인터페이스와 같은 상위 형식으로 선언
+* 변수 대입시 상위 형식을 구체적으로 구현하는 형식
+* 어떤 객체든 넣을 수 있음
+* 변수를 선언하는 클래스에서 실제 객체의 형식을 몰라도됨
+
+// 아래와 같은 방식은 구현에 맞춰 코딩해야 함
+Dog d = new Dog();
+d.dark();
+
+// 다형성을 활용하여 Animal 레퍼런스를 사용한 예
+Animal animal = new Dog();
+animal.makeSound();
+
+// 구체적으로 구현된 객체를 실행 시 대입하는 것이 더 바람직함
+a = getAnimal();
+a.makeSound();
+```
+
+### `오리의 행동을 구현하는 방법`
+
+```txt
+* FlyBehavior, QuackBehavior 2개의 인터페이스 사용
+* 각각의 행동을 구현하는 클래스 구현
+* 다른 형식의 객체에서 행동을 재사용 할 수 있음
+* Duck 클래스를 건드리지 않고 행동을 추가할 수 있음
+```
+
+```mermaid
+classDiagram
+
+class FlyBehavior {
+    fly()
+}
+<<interface>> FlyBehavior
+
+class FlyingWithWings {
+    fly() //나는 방법 구현
+}
+
+class FlyNoWay {
+    fly() //아무것도 구현하지 않음
+}
+
+FlyingWithWings --> FlyBehavior
+FlyNoWay --> FlyBehavior
+
+class QuackBehavior {
+    quack()
+}
+<<interface>> QuackBehavior
+
+class Quack {
+    quack() // 꽥꽥
+}
+
+class Squeak {
+    quack() // 삑삑
+}
+
+class MuteQuack {
+    quack() // 아무것도 구현하지 않음
+}
+
+Quack --> QuackBehavior
+Squeak --> QuackBehavior
+MuteQuack --> QuackBehavior
+```
+
